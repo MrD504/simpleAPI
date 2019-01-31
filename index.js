@@ -33,36 +33,36 @@ httpsServer.listen(config.httpsPort, () => {
 
 const unifiedServer = (req, res) => {
   /* Get the url and parse it */
-  let parsedUrl = url.parse(req.url, true);
+  const parsedUrl = url.parse(req.url, true);
 
   /* Get the path */
-  let path = parsedUrl.pathname;
-  let trimmedPath = path.replace(/^\/|\/+$/g, "");
+  const path = parsedUrl.pathname;
+  const trimmedPath = path.replace(/^\/|\/+$/g, "");
 
   /* Get the HTTP method */
-  let method = req.method.toLowerCase();
+  const method = req.method.toLowerCase();
 
   /* Get query */
-  let queryStringObject = parsedUrl.query;
+  const queryStringObject = parsedUrl.query;
 
   /* Get Headers */
-  let headers = req.headers;
+  const headers = req.headers;
 
   /* Get the payload if there is any */
-  let decoder = new StringDecoder("utf-8");
+  const decoder = new StringDecoder("utf-8");
   let buffer = "";
 
   req.on("data", data => (buffer += decoder.write(data)));
 
   req.on("end", () => (buffer += decoder.end()));
 
-  let chosenHandler =
+  const chosenHandler =
     typeof router[trimmedPath] !== "undefined"
       ? router[trimmedPath]
       : handlers.notFound;
 
   /* Construct the data object to send to the handler */
-  let data = {
+  const data = {
     trimmedPath: trimmedPath,
     queryStringObject: queryStringObject,
     method: method,
@@ -79,7 +79,7 @@ const unifiedServer = (req, res) => {
     payload = typeof payload === "object" ? payload : {};
 
     /* Convert the payload to a string */
-    var payloadString = JSON.stringify(payload);
+    const payloadString = JSON.stringify(payload);
 
     /* Return the response */
     res.setHeader("Content-Type", "application/json");
@@ -96,12 +96,14 @@ let handlers = {};
 /* Define a request router */
 /* Callback a http status code, and a payload object */
 
-handlers.sample = (data, callback) =>
-  callback(406, { name: "handlers.sample" });
+/* Keep alive check route */
+handlers.ping = (data, callback) => callback(200);
 
+handlers.hello = (data, callback) => callback(200, { message: "Hello world!" });
 /* Not found handler */
 handlers.notFound = (data, callback) => callback(404);
 
-let router = {
-  sample: handlers.sample
+const router = {
+  ping: handlers.ping,
+  hello: handlers.hello
 };
