@@ -4,6 +4,23 @@ const fs = require("fs");
 const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 const config = require("./config");
+const data = require("./lib/data");
+
+/* temporary test */
+// data.create("test", "newfile", { foo: "bar" }, err => {
+//   console.error(err);
+// });
+data.update("test", "newfile", { bar: "foo" }, err => {
+  console.log(err);
+});
+
+data.read("test", "newfile", (err, data) => {
+  if (!err) {
+    console.log(data);
+  } else {
+    console.error(err);
+  }
+});
 
 /* Instantiating the HTTP server */
 const httpServer = http.createServer((req, res) => {
